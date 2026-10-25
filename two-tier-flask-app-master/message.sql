@@ -1,4 +1,8 @@
-CREATE TABLE messages (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    message TEXT
+
+CREATE TABLE IF NOT EXISTS messages (
+    id SERIAL PRIMARY KEY,
+    message VARCHAR(255) NOT NULL
 );
+
+INSERT INTO messages (message)
+VALUES ('Hello from PostgreSQL Docker!');
