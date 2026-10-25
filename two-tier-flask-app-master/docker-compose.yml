@@ -1,19 +1,19 @@
+
 services:
-  mysql:
-    image: mysql:8.4
-    container_name: mysql
+  postgres:
+    image: postgres:17
+    container_name: postgres
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
-      MYSQL_DATABASE: ${MYSQL_DATABASE:-devops}
-      MYSQL_USER: ${MYSQL_USER:-admin}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-admin}
+      POSTGRES_USER: ${POSTGRES_USER:-admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-admin}
+      POSTGRES_DB: ${POSTGRES_DB:-devops}
     volumes:
-      - mysql-data:/var/lib/mysql
-      - ./message.sql:/docker-entrypoint-initdb.d/message.sql
+      - postgres-data:/var/lib/postgresql/data
+      - ./message.sql:/docker-entrypoint-initdb.d/message.sql:ro
     networks:
       - twotier
     healthcheck:
-      test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -p$$MYSQL_ROOT_PASSWORD"]
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -26,12 +26,13 @@ services:
     ports:
       - "5000:5000"
     environment:
-      MYSQL_HOST: mysql
-      MYSQL_USER: ${MYSQL_USER:-admin}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-admin}
-      MYSQL_DB: ${MYSQL_DATABASE:-devops}
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: ${POSTGRES_USER:-admin}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-admin}
+      DB_NAME: ${POSTGRES_DB:-devops}
     depends_on:
-      mysql:
+      postgres:
         condition: service_healthy
     networks:
       - twotier
@@ -44,7 +45,7 @@ services:
       start_period: 30s
 
 volumes:
-  mysql-data:
+  postgres-data:
 
 networks:
   twotier:
