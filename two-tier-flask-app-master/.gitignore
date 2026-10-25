@@ -1,7 +1,17 @@
+
+# Python virtual environment
 .venv/
+
+# Python cache files
 __pycache__/
 *.pyc
 .pytest_cache/
+
+# Environment variables and passwords
 .env
-mysql-data/
+
+# PostgreSQL data
+postgres-data/
+
+# Local system files
 .DS_Store
